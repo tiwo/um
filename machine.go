@@ -1,7 +1,5 @@
 package main
 
-import "os"
-
 type Platter uint32
 type Character uint8
 type Array []Platter
@@ -19,12 +17,4 @@ func NewState() State {
 		0,
 	}
 	return um
-}
-
-func readFile(f os.File) (Array, error) {
-
-}
-
-func (um State) ReadProgramFromFile(f os.File) error {
-
 }
