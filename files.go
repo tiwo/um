@@ -1,50 +1,51 @@
 package main
 
 import (
+	"errors"
+	"fmt"
 	"io"
-	"os"
 )
 
-func readFile(f os.File) (Array, error) {
+func readFile(f io.Reader) (Array, error) {
 	var countToFour = 0
 	var currentPlatter Platter = 0
-	result := make([]Platter)
-	var buf [1024]byte
+	result := make([]Platter, 0)
+	buf := make([]byte, 3)
 	var bytesRead int
 	var err error
-	for err = nil; err == nil; bytesRead, err := io.ReadFull(f, buf) {
+	for err = nil; err == nil; bytesRead, err = f.Read(buf) {
 		for i := 0; i < bytesRead; i++ {
-			currentPlatter = (currentPlatter<<8) + uint8(buf[i])
+			currentPlatter = (currentPlatter << 8) + Platter(buf[i])
 			countToFour++
-			if countToFour = 3 {
-				append(result, currentPlatter)
+			if countToFour == 4 {
+				result = append(result, currentPlatter)
 				currentPlatter = 0
 				countToFour = 0
 			}
 		}
 	}
 
-	switch err = err.(type) {
-	case io.EOF:
-		// noop
-	case io.ErrUnexpectedEOF:
-		// noop
-	default:
-		return nil, err
+	if err != nil {
+		if !errors.Is(err, io.EOF) && !errors.Is(err, io.ErrUnexpectedEOF) {
+			return nil, err
+		}
+		// EOF and ErrUnexpectedEOF are okay - ignore them here
 	}
 
 	if countToFour != 0 {
-		return nil, io.ErrUnexpectedEOF("the last platter was not received (file size should be divisible by 4 bytes")
+		fmt.Println("io.ErrUnexpectedEOF")
+		return nil, io.ErrUnexpectedEOF
 	}
 
 	return result, nil
 
 }
 
-func (um State) ReadProgramFromFile(f os.File) error {
+func (um State) ReadProgramFromFile(f io.Reader) error {
 	array, err := readFile(f)
 	if err != nil {
-		
+		return err
 	}
-
+	_ = array
+	return err
 }
