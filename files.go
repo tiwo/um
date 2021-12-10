@@ -6,7 +6,7 @@ import (
 	"io"
 )
 
-func readFile(f io.Reader) (Array, error) {
+func readArrayFromFile(f io.Reader) (Array, error) {
 	var countToFour = 0
 	var currentPlatter Platter = 0
 	result := make([]Platter, 0)
@@ -41,11 +41,12 @@ func readFile(f io.Reader) (Array, error) {
 
 }
 
-func (um State) ReadProgramFromFile(f io.Reader) error {
-	array, err := readFile(f)
+func ReadProgramFromFile(f io.Reader) (State, error) {
+	um := NewState()
+
+	um.arrays[0], err := readArrayFromFile(f)
 	if err != nil {
-		return err
+		return State{}, err
 	}
-	_ = array
-	return err
+	return um, nil
 }

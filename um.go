@@ -12,9 +12,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	x, err := readFile(f)
+	um, err := ReadProgramFromFile(f)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("... %#v\n", x)
+	fmt.Printf("... %#v\n", um)
 }
